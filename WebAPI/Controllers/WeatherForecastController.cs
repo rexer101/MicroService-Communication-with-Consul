@@ -6,28 +6,27 @@ namespace WebAPI.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IServiceClient _client;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IServiceClient client)
         {
             _logger = logger;
+            _client = client;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet]
+        [Route("GetWeatherForecastFirstService")]
+        public async Task<IEnumerable<WeatherForecast>> GetWeatherForcastFromFirstService()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return await _client.GetFirstServiceForcast();
+        }
+
+        [HttpGet]
+        [Route("GetWeatherForecastSecondService")]
+        public async Task<IEnumerable<WeatherForecast>> GetWeatherForcastFromSecondService()
+        {
+            return await _client.GetSecondServiceForcast();
         }
     }
 }

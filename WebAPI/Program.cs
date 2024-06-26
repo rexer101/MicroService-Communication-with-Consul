@@ -1,3 +1,6 @@
+using Refit;
+using WebAPI;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,7 +9,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddSingleton(opt =>
+{
+    return RestService.For<IServiceClient>("https://localhost:5001");
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
